@@ -20,7 +20,7 @@ namespace APITesting.Business
 
             if (response.Content != null)
             {
-                var users = JsonConvert.DeserializeObject<List<User>>(response.Content);
+                var users = JsonConvert.DeserializeObject<List<User>>(response.Content); //TODO: can be moved to a method List<T> DeserializeObject(string responseContent)
                 return (users ?? new List<User>(), response);
             }
             else

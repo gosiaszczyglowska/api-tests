@@ -12,7 +12,7 @@ namespace APITesting.Core
         _client = new RestClient(baseUrl);
         }
 
-        public RestResponse ExecuteRequest(string resource, Method method)
+        public RestResponse ExecuteRequest(string resource, Method method)//TODO: you can put the logging here and every request will be logged 
         {
             var request = new RestRequest(resource, method);
 

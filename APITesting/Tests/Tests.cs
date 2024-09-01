@@ -6,7 +6,7 @@ using APITesting.Core.Utilities;
 
 namespace APITesting.Tests
 {
-    internal class Tests 
+    internal class Tests //TODO: devide layers by projects
     {
         [TestFixture]
         [Category("API")]
@@ -16,24 +16,24 @@ namespace APITesting.Tests
         
 
             [Test]
-            public void GetUsers_ValidateResponseStructure()
+            public void GetUsers_ValidateResponseStructure() //TODO: Verify response.ErrorException for all tests as a part of "Validate There are no error messages" verifications
             {
                 Log.LogInfo("Starting test: GetUsers_ValidateResponseStructure");
 
                 Log.LogDebug("Calling GetUser API...");
                 var (users, response) = userService.GetUsers();
 
-                Log.LogDebug($"Received response with status code {(int)response.StatusCode} - {response.StatusDescription}");
+                Log.LogDebug($"Received response with status code {(int)response.StatusCode} - {response.StatusDescription}"); //This logging can be placed in the GetUsers() method
 
-                
+
                 Assert.AreEqual(200, (int)response.StatusCode, "Expected 200 OK response.");
                 Console.WriteLine($"{(int)response.StatusCode} - {response.StatusDescription}");
 
 
-                foreach (var user in users)
+                foreach (var user in users) //What if users.count = 0?
                 {
                     Log.LogDebug($"Validating user: {user.Id}");
-                    Assert.IsNotNull(user.Id, "User should have an 'id'.");
+                    Assert.IsNotNull(user.Id, "User should have an 'id'."); //TODO: please use AssertionScope() from FluentAssertions library
                     Assert.IsNotNull(user.Name, "User should have a 'name'.");
                     Assert.IsNotNull(user.Username, "User should have a 'username'.");
                     Assert.IsNotNull(user.Email, "User should have an 'email'.");
@@ -51,8 +51,10 @@ namespace APITesting.Tests
             [TestCase("Server", "cloudflare")]
             [TestCase("Connection", "keep-alive")]
             [TestCase("Content-Type", "application/json; charset=utf-8")]
-            public void GetUsers_ValidateResponseHeader(string headerName, string headerValue )
-             {
+            public void GetUsers_ValidateResponseHeader(string headerName, string headerValue)//TODO: Fails:
+                                                                                              // GetUsers_ValidateResponseHeader("Content-Type","application/json; charset=utf-8")
+
+            {
                 Log.LogInfo("Starting test: GetUsers_ValidateResponseHeader");
                 
                 Log.LogDebug("Calling GetUsers API...");
@@ -103,7 +105,7 @@ namespace APITesting.Tests
                      Assert.IsNotEmpty(user.Username, "username should not be empty");
                  }
 
-                 foreach (var user in users)
+                 foreach (var user in users) //TODO: put it in the same foreach?
                  {
                     Log.LogDebug($"Validating user's company name for userID {user.Id} - {user.Company.Name}");
                     Assert.IsNotNull(user.Company, "Company should not be null");

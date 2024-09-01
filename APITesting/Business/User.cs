@@ -1,7 +1,7 @@
 ﻿
 namespace APITesting.Business
 {
-    public class User
+    public class User //TODO: move to UsersBuilder folder and split to seperate classes
     {
         public int Id { get; set; }
         public string? Name { get; set; }
