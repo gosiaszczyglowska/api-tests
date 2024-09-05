@@ -16,8 +16,12 @@ namespace APITesting.Test.Tests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            XmlConfigurator.Configure(new FileInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Core", "Log.config"))); // TODO: What does it do and can it be moved to another class?
-            //create a private method
+            LogConfig();
+        }
+
+        private void LogConfig()
+        {
+            XmlConfigurator.Configure(new FileInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Core", "Log.config")));
             Console.WriteLine($"Logs will be stored in: {Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs")}");
         }
 
@@ -25,7 +29,7 @@ namespace APITesting.Test.Tests
         public void Setup()
         {
             baseClient = new BaseClient("https://jsonplaceholder.typicode.com"); //TODO: move to config
-            userService = new UserService(baseClient); //TODO: create UserService object in UserServiceTests class (one for all the tests)
+            userService = new UserService(baseClient); 
         }
     }
 }

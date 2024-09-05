@@ -1,4 +1,5 @@
-﻿using RestSharp;
+﻿using APITesting.Core.Utilities;
+using RestSharp;
 
 
 namespace APITesting.Core.Client
@@ -22,11 +23,13 @@ namespace APITesting.Core.Client
             return ExecuteRequest(resource, Method.Post);
         }
 
-        public RestResponse ExecuteRequest(string resource, Method method)//TODO: you can put the logging here and every request will be logged -it should be private
+        private RestResponse ExecuteRequest(string resource, Method method)
         {
             var request = new RestRequest(resource, method);
+            var response = _client.Execute(request);
+            Log.LogDebug($"Received response with status code {(int)response.StatusCode} - {response.StatusDescription}");
 
-            return _client.Execute(request);
+            return response;
         }
 
         //TODO: learn about interfaces

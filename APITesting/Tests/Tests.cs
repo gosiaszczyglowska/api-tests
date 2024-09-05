@@ -26,8 +26,7 @@ namespace APITesting.Test.Tests
                 Log.LogDebug("Calling GetUser API...");
                 var (users, response) = userService.GetUsers();
 
-                Log.LogDebug($"Received response with status code {(int)response.StatusCode} - {response.StatusDescription}"); //This logging can be placed in the GetUsers() method
-
+                
 
                 Assert.AreEqual(200, (int)response.StatusCode, "Expected 200 OK response.");
                 Assert.IsNull(response.ErrorException, $"Error retrieving response {response.ErrorMessage}");
@@ -74,7 +73,7 @@ namespace APITesting.Test.Tests
                 Log.LogDebug("Calling GetUsers API...");
                 var (users, response) = userService.GetUsers();
 
-                Log.LogDebug($"Received response with status code {(int)response.StatusCode} - {response.StatusDescription}");
+                
                 Assert.AreEqual(200, (int)response.StatusCode, "Expected 200 OK response.");
                 Assert.IsNull(response.ErrorException, $"Error retrieving response {response.ErrorMessage}");
 
@@ -103,7 +102,7 @@ namespace APITesting.Test.Tests
                 Log.LogDebug("Calling GetUsers API...");
                 var (users, response) = userService.GetUsers();
 
-                Log.LogDebug($"Received response with status code {(int)response.StatusCode} - {response.StatusDescription}");
+                
                 Assert.AreEqual(200, (int)response.StatusCode, "Expected 200 OK response.");
                 Assert.IsNull(response.ErrorException, $"Error retrieving response {response.ErrorMessage}");
 
@@ -135,9 +134,9 @@ namespace APITesting.Test.Tests
                 Log.LogInfo("Starting test: GetInvalidEndpoint");//reduce number of logs
 
                 Log.LogDebug("Calling GetUsers API with invalid endpoint...");
-                var response = baseClient.Get("invalidendpoint"); //do the same for post
+                var response = baseClient.Get("invalidendpoint"); 
 
-                Log.LogDebug($"Received response with status code {(int)response.StatusCode} - {response.StatusDescription}");
+                
                 bool isInvalid = (int)response.StatusCode == 404 && response.StatusDescription == "Not Found";
                 Assert.IsNull(response.ErrorException, $"Error retrieving response {response.ErrorMessage}");
 
@@ -162,7 +161,7 @@ namespace APITesting.Test.Tests
                 Log.LogDebug($"Creating user with Name: {newUser.Name} and Username: {newUser.Username}");
                 var response = userService.CreateUser(newUser);
 
-                Log.LogDebug($"Received response with status code {(int)response.StatusCode} - {response.StatusDescription}");
+               
                 Assert.IsNotEmpty(response.Content);
                 Assert.IsNotNull(newUser.Id);
 
