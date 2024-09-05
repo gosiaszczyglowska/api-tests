@@ -120,8 +120,7 @@ namespace APITesting.Test.Tests
                     Assert.IsNotEmpty(user.Company.Name, "Company name should not be empty");
                  }
 
-                
-                //+ (private method for check user)
+
                 Log.LogDebug($"Validating uniqness of users IDs");
                 var userIds = users.Select(u => u.Id).ToList();
                 var distinctUserIds = userIds.Distinct().ToList();
