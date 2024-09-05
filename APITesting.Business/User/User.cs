@@ -1,7 +1,7 @@
 ﻿
-namespace APITesting.Business
+namespace APITesting.Business.User
 {
-    public class User //TODO: move to UsersBuilder folder and split to seperate classes
+    public class User //TODO: move to UsersBuilder folder and split to seperate classes (folder UserBuiler, seaprate classes)
     {
         public int Id { get; set; }
         public string? Name { get; set; }

@@ -1,8 +1,9 @@
 ﻿using APITesting.Core;
+using APITesting.Core.Client;
 using Newtonsoft.Json;
 using RestSharp;
 
-namespace APITesting.Business
+namespace APITesting.Business.User
 {
     public class UserService
     {
@@ -16,11 +17,12 @@ namespace APITesting.Business
         public (List<User>, RestResponse) GetUsers() 
         {
 
-            var response = _baseClient.ExecuteRequest("users", Method.Get);
+            var response = _baseClient.Get("users");
 
             if (response.Content != null)
             {
                 var users = JsonConvert.DeserializeObject<List<User>>(response.Content); //TODO: can be moved to a method List<T> DeserializeObject(string responseContent)
+                                                                                         //(static JSON helper method / parse object
                 return (users ?? new List<User>(), response);
             }
             else

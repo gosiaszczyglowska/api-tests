@@ -2,9 +2,10 @@
 using APITesting.Business;
 using RestSharp;
 using APITesting.Core.Utilities;
+using APITesting.Business.User;
 
 
-namespace APITesting.Tests
+namespace APITesting.Test.Tests
 {
     internal class Tests //TODO: devide layers by projects
     {
@@ -30,7 +31,7 @@ namespace APITesting.Tests
                 Console.WriteLine($"{(int)response.StatusCode} - {response.StatusDescription}");
 
 
-                foreach (var user in users) //What if users.count = 0?
+                foreach (var user in users) //What if users.count = 0? (check that the count is not 0 first)
                 {
                     Log.LogDebug($"Validating user: {user.Id}");
                     Assert.IsNotNull(user.Id, "User should have an 'id'."); //TODO: please use AssertionScope() from FluentAssertions library
@@ -64,15 +65,15 @@ namespace APITesting.Tests
                 Assert.AreEqual(200, (int)response.StatusCode, "Expected 200 OK response.");
 
 
-                Assert.IsNotNull(response.Headers, "Response headers dont exist in the obtained response");
+                Assert.IsNotNull(response.ContentHeaders, "Response headers dont exist in the obtained response");
 
-                foreach (var header in response.Headers)
+                foreach (var header in response.ContentHeaders)
                 {
                     Console.WriteLine($"{header.Name}: {header.Value}");
                 }
 
                 Log.LogDebug($"Validating that {headerName} header exists in the response");
-                var searchedHeader = response.Headers.FirstOrDefault(h => h.Name.Equals($"{headerName}", StringComparison.OrdinalIgnoreCase));
+                var searchedHeader = response.ContentHeaders.FirstOrDefault(h => h.Name.Equals($"{headerName}", StringComparison.OrdinalIgnoreCase));
                 Assert.IsNotNull(searchedHeader, $"{headerName} header is missing in the response");
 
                 string searchedHeaderValue = searchedHeader.Value.ToString();
@@ -122,7 +123,7 @@ namespace APITesting.Tests
                      }
 
                  }*/
-
+                //+ (private method for check user)
                 Log.LogDebug($"Validating uniqness of users IDs");
                 var userIds = users.Select(u => u.Id).ToList();
                 var distinctUserIds = userIds.Distinct().ToList();
@@ -134,10 +135,10 @@ namespace APITesting.Tests
             [Test]
              public void GetInvalidEndpoint()
              {
-                Log.LogInfo("Starting test: GetInvalidEndpoint");
+                Log.LogInfo("Starting test: GetInvalidEndpoint");//reduce number of logs
 
                 Log.LogDebug("Calling GetUsers API with invalid endpoint...");
-                var response = baseClient.ExecuteRequest("invalidendpoint", Method.Get);
+                var response = baseClient.Get("invalidendpoint"); //do the same for post
 
                 Log.LogDebug($"Received response with status code {(int)response.StatusCode} - {response.StatusDescription}");
                 bool isInvalid = (int)response.StatusCode == 404 && response.StatusDescription == "Not Found";
