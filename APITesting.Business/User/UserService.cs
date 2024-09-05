@@ -2,6 +2,7 @@
 using APITesting.Core.Client;
 using Newtonsoft.Json;
 using RestSharp;
+using APITesting.Business.User.UserBuilder;
 
 namespace APITesting.Business.User
 {
@@ -14,16 +15,16 @@ namespace APITesting.Business.User
             _baseClient = baseClient;
         }
 
-        public (List<User>, RestResponse) GetUsers() 
+        public (List<UserBuilder.User>, RestResponse) GetUsers() 
         {
 
             var response = _baseClient.Get("users");
 
             if (response.Content != null)
             {
-                var users = JsonConvert.DeserializeObject<List<User>>(response.Content); //TODO: can be moved to a method List<T> DeserializeObject(string responseContent)
+                var users = JsonConvert.DeserializeObject<List<UserBuilder.User>>(response.Content); //TODO: can be moved to a method List<T> DeserializeObject(string responseContent)
                                                                                          //(static JSON helper method / parse object
-                return (users ?? new List<User>(), response);
+                return (users ?? new List<UserBuilder.User>(), response);
             }
             else
             {
@@ -31,9 +32,9 @@ namespace APITesting.Business.User
             }
         }
 
-        public RestResponse CreateUser(User newUser) 
+        public RestResponse CreateUser(UserBuilder.User newUser) 
         {
-            var response = _baseClient.ExecuteRequest("users", Method.Post);
+            var response = _baseClient.Post("users");
             return response;
         }
     }

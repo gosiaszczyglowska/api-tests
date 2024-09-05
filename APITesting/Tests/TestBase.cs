@@ -11,7 +11,7 @@ namespace APITesting.Test.Tests
     {
         protected UserService? userService;
         protected BaseClient? baseClient;
-        //private static readonly ILog Logger = LogManager.GetLogger(typeof(UserServiceTests));//TODO: What does it log?
+
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
@@ -26,7 +26,6 @@ namespace APITesting.Test.Tests
         {
             baseClient = new BaseClient("https://jsonplaceholder.typicode.com"); //TODO: move to config
             userService = new UserService(baseClient); //TODO: create UserService object in UserServiceTests class (one for all the tests)
-            //Logger.Info("Test setup complete.");
         }
     }
 }

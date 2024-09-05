@@ -12,10 +12,16 @@ namespace APITesting.Core.Client
             _client = new RestClient(baseUrl);
         }
 
-        public RestResponse Get(string resource) //the same for post
+        public RestResponse Get(string resource) 
         {
             return ExecuteRequest(resource, Method.Get);
         }
+
+        public RestResponse Post(string resource) 
+        {
+            return ExecuteRequest(resource, Method.Post);
+        }
+
         public RestResponse ExecuteRequest(string resource, Method method)//TODO: you can put the logging here and every request will be logged -it should be private
         {
             var request = new RestRequest(resource, method);

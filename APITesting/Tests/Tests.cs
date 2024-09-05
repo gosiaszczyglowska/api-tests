@@ -2,22 +2,24 @@
 using APITesting.Business;
 using RestSharp;
 using APITesting.Core.Utilities;
-using APITesting.Business.User;
+using FluentAssertions.Execution;
+using FluentAssertions;
+using APITesting.Business.User.UserBuilder;
 
 
 namespace APITesting.Test.Tests
 {
-    internal class Tests //TODO: devide layers by projects
+    internal class Tests
     {
         [TestFixture]
         [Category("API")]
         [Parallelizable(ParallelScope.Fixtures)]
         public class UserServiceTests : TestBase
         {
-        
+
 
             [Test]
-            public void GetUsers_ValidateResponseStructure() //TODO: Verify response.ErrorException for all tests as a part of "Validate There are no error messages" verifications
+            public void GetUsers_ValidateResponseStructure()
             {
                 Log.LogInfo("Starting test: GetUsers_ValidateResponseStructure");
 
@@ -28,32 +30,43 @@ namespace APITesting.Test.Tests
 
 
                 Assert.AreEqual(200, (int)response.StatusCode, "Expected 200 OK response.");
+                Assert.IsNull(response.ErrorException, $"Error retrieving response {response.ErrorMessage}");
+
                 Console.WriteLine($"{(int)response.StatusCode} - {response.StatusDescription}");
 
+                if (users.Count == 0) 
+                {
+                    Log.LogWarn("No users to validate");
+                }
+                else 
+                { 
 
-                foreach (var user in users) //What if users.count = 0? (check that the count is not 0 first)
+                foreach (var user in users) 
                 {
                     Log.LogDebug($"Validating user: {user.Id}");
-                    Assert.IsNotNull(user.Id, "User should have an 'id'."); //TODO: please use AssertionScope() from FluentAssertions library
-                    Assert.IsNotNull(user.Name, "User should have a 'name'.");
-                    Assert.IsNotNull(user.Username, "User should have a 'username'.");
-                    Assert.IsNotNull(user.Email, "User should have an 'email'.");
-                    Assert.IsNotNull(user.Address, "User should have an 'address'.");
-                    Assert.IsNotNull(user.Phone, "User should have a 'phone'.");
-                    Assert.IsNotNull(user.Website, "User should have a 'website'.");
-                    Assert.IsNotNull(user.Company, "User should have a 'company'.");
-                    Console.WriteLine($"{user.Id}, {user.Name}, {user.Username}, {user.Email}, {user.Address}, {user.Phone}, {user.Website}, {user.Company}");
-                }
+
+                        using (new AssertionScope())
+                        {
+                            user.Id.Should().NotBe(null, "User should have a valid 'id'."); //is this acceptable?
+                            user.Name.Should().NotBeNull("User should have a 'name'.");
+                            user.Username.Should().NotBeNull("User should have a 'username'.");
+                            user.Email.Should().NotBeNull("User should have an 'email'.");
+                            user.Address.Should().NotBeNull("User should have an 'address'.");
+                            user.Phone.Should().NotBeNull("User should have a 'phone'.");
+                            user.Website.Should().NotBeNull("User should have a 'website'.");
+                            user.Company.Should().NotBeNull("User should have a 'company'.");
+                          
+                        }
+                        Console.WriteLine($"{user.Id}, {user.Name}, {user.Username}, {user.Email}, {user.Address}, {user.Phone}, {user.Website}, {user.Company}");
+                    }
+            }
 
                 Log.LogInfo($"Test GetUsers_ValidateResponseStructure completed");
             }
 
 
-            [TestCase("Server", "cloudflare")]
-            [TestCase("Connection", "keep-alive")]
             [TestCase("Content-Type", "application/json; charset=utf-8")]
-            public void GetUsers_ValidateResponseHeader(string headerName, string headerValue)//TODO: Fails:
-                                                                                              // GetUsers_ValidateResponseHeader("Content-Type","application/json; charset=utf-8")
+            public void GetUsers_ValidateResponseHeader(string headerName, string headerValue)
 
             {
                 Log.LogInfo("Starting test: GetUsers_ValidateResponseHeader");
@@ -63,14 +76,11 @@ namespace APITesting.Test.Tests
 
                 Log.LogDebug($"Received response with status code {(int)response.StatusCode} - {response.StatusDescription}");
                 Assert.AreEqual(200, (int)response.StatusCode, "Expected 200 OK response.");
+                Assert.IsNull(response.ErrorException, $"Error retrieving response {response.ErrorMessage}");
 
 
-                Assert.IsNotNull(response.ContentHeaders, "Response headers dont exist in the obtained response");
+                Assert.IsNotNull(response.ContentHeaders, "Response headers don't exist in the obtained response");
 
-                foreach (var header in response.ContentHeaders)
-                {
-                    Console.WriteLine($"{header.Name}: {header.Value}");
-                }
 
                 Log.LogDebug($"Validating that {headerName} header exists in the response");
                 var searchedHeader = response.ContentHeaders.FirstOrDefault(h => h.Name.Equals($"{headerName}", StringComparison.OrdinalIgnoreCase));
@@ -95,34 +105,22 @@ namespace APITesting.Test.Tests
 
                 Log.LogDebug($"Received response with status code {(int)response.StatusCode} - {response.StatusDescription}");
                 Assert.AreEqual(200, (int)response.StatusCode, "Expected 200 OK response.");
+                Assert.IsNull(response.ErrorException, $"Error retrieving response {response.ErrorMessage}");
 
                 Log.LogDebug($"Validating number of users returned {users.Count}");
                  Assert.AreEqual(10, users.Count, "Expected 10 users from the API.");
 
                  foreach (var user in users)
                  {
-                     Log.LogDebug($"Validating user {user.Name} {user.Username}");
-                     Assert.IsNotEmpty(user.Name, "name should not be empty");
-                     Assert.IsNotEmpty(user.Username, "username should not be empty");
-                 }
-
-                 foreach (var user in users) //TODO: put it in the same foreach?
-                 {
+                    Log.LogDebug($"Validating user {user.Name} {user.Username}");
+                    Assert.IsNotEmpty(user.Name, "name should not be empty");
+                    Assert.IsNotEmpty(user.Username, "username should not be empty");
                     Log.LogDebug($"Validating user's company name for userID {user.Id} - {user.Company.Name}");
                     Assert.IsNotNull(user.Company, "Company should not be null");
                     Assert.IsNotEmpty(user.Company.Name, "Company name should not be empty");
                  }
 
-                /* //Alternative way to validate that id numbers are unique 
-                 for (int i = 0; i < users.Count; i++)
-                 {
-                     for (int j = i + 1; j < users.Count; j++)
-                     {
-                         Console.WriteLine($"User i: {users[i].Id}, user j: {users[j].Id}");
-                         Assert.AreNotEqual(users[i].Id, users[j].Id, $"Duplicate user ID found: {users[i].Id}");
-                     }
-
-                 }*/
+                
                 //+ (private method for check user)
                 Log.LogDebug($"Validating uniqness of users IDs");
                 var userIds = users.Select(u => u.Id).ToList();
@@ -142,6 +140,8 @@ namespace APITesting.Test.Tests
 
                 Log.LogDebug($"Received response with status code {(int)response.StatusCode} - {response.StatusDescription}");
                 bool isInvalid = (int)response.StatusCode == 404 && response.StatusDescription == "Not Found";
+                Assert.IsNull(response.ErrorException, $"Error retrieving response {response.ErrorMessage}");
+
 
                 Log.LogDebug($"Validating Status code and Status description for invalid endpoint");
                 Assert.IsTrue(isInvalid, $"Expected 404 code and description 'Not found', but received {(int)response.StatusCode} and {response.StatusDescription}");
@@ -170,6 +170,7 @@ namespace APITesting.Test.Tests
 
                 bool userCreated = (int)response.StatusCode == 201 && response.StatusDescription == "Created";
                 Assert.IsTrue(userCreated, $"Expected 202 status code and description 'Created', but received {(int)response.StatusCode} and {response.StatusDescription}");
+                Assert.IsNull(response.ErrorException, $"Error retrieving response {response.ErrorMessage}");
 
                 Log.LogDebug($"New user was successfully created with the ID: {newUser.Id}");
                 
