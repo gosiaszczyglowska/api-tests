@@ -1,6 +1,4 @@
 ﻿using NUnit.Framework; 
-using APITesting.Business;
-using RestSharp;
 using APITesting.Core.Utilities;
 using FluentAssertions.Execution;
 using FluentAssertions;

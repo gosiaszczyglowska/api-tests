@@ -31,9 +31,8 @@ namespace APITesting.Business.User
                     throw new Exception("Response content is null.");
                 }
             }
-
-
         }
+
         public RestResponse CreateUser(UserBuilder.User newUser)
         {
             var response = _baseClient.Post("users");

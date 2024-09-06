@@ -1,9 +1,8 @@
-﻿using APITesting.Business;
-using APITesting.Core.Client;
+﻿using APITesting.Core.Client;
 using log4net.Config;
-using log4net;
 using NUnit.Framework;
 using APITesting.Business.User;
+using Microsoft.Extensions.Configuration;
 
 namespace APITesting.Test.Tests
 {
@@ -11,6 +10,7 @@ namespace APITesting.Test.Tests
     {
         protected UserService? userService;
         protected BaseClient? baseClient;
+        private IConfigurationRoot configuration;
 
 
         [OneTimeSetUp]
@@ -28,7 +28,11 @@ namespace APITesting.Test.Tests
         [SetUp]
         public void Setup()
         {
-            baseClient = new BaseClient("https://jsonplaceholder.typicode.com"); //TODO: move to config
+
+            configuration = ConfigurationHelper.GetConfiguration();
+            var baseUrl = configuration["ApiSettings:BaseUrl"];
+
+            baseClient = new BaseClient(baseUrl);
             userService = new UserService(baseClient); 
         }
     }
