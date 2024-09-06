@@ -23,7 +23,7 @@ namespace APITesting.Core.Client
             return ExecuteRequest(resource, Method.Post);
         }
 
-        private RestResponse ExecuteRequest(string resource, Method method)
+        public RestResponse ExecuteRequest(string resource, Method method)
         {
             var request = new RestRequest(resource, method);
             var response = _client.Execute(request);
