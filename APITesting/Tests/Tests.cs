@@ -37,7 +37,7 @@ namespace APITesting.Test.Tests
 
                         using (new AssertionScope())
                         {
-                            user.Id.Should().NotBe(null, "User should have a valid 'id'."); //is this acceptable?
+                            user.Id.Should().NotBe(null, "User should have a valid 'id'.");
                             user.Name.Should().NotBeNull("User should have a 'name'.");
                             user.Username.Should().NotBeNull("User should have a 'username'.");
                             user.Email.Should().NotBeNull("User should have an 'email'.");

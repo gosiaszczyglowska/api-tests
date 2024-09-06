@@ -38,4 +38,5 @@ namespace APITesting.Business.User
             var response = _baseClient.Post("users");
             return response;
         }
-    } }
+    } 
+}
