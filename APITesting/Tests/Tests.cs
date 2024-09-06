@@ -30,7 +30,6 @@ namespace APITesting.Test.Tests
                 }
                 else 
                 { 
-
                 foreach (var user in users) 
                 {
                     Log.LogDebug($"Validating user: {user.Id}");
@@ -44,14 +43,12 @@ namespace APITesting.Test.Tests
                             user.Address.Should().NotBeNull("User should have an 'address'.");
                             user.Phone.Should().NotBeNull("User should have a 'phone'.");
                             user.Website.Should().NotBeNull("User should have a 'website'.");
-                            user.Company.Should().NotBeNull("User should have a 'company'.");
-                          
+                            user.Company.Should().NotBeNull("User should have a 'company'.");                       
                         }
                         Console.WriteLine($"{user.Id}, {user.Name}, {user.Username}, {user.Email}, {user.Address}, {user.Phone}, {user.Website}, {user.Company}");
-                    }
+                }
             }
         }
-
 
             [TestCase("Content-Type", "application/json; charset=utf-8")]
             public void GetUsers_ValidateResponseHeader(string headerName, string headerValue)
@@ -101,8 +98,8 @@ namespace APITesting.Test.Tests
                 Log.LogDebug($"Validating uniqness of users IDs");
                 var userIds = users.Select(u => u.Id).ToList();
                 var distinctUserIds = userIds.Distinct().ToList();
-                Assert.AreEqual(userIds.Count, distinctUserIds.Count, "User ids should be unique");
-            }
+                Assert.AreEqual(userIds.Count, distinctUserIds.Count, "User ids should be unique");               
+             }
 
             [Test]
              public void GetInvalidEndpoint()

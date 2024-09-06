@@ -23,7 +23,7 @@ namespace APITesting.Core.Client
             return ExecuteRequest(resource, Method.Post);
         }
 
-        public RestResponse ExecuteRequest(string resource, Method method)
+        private RestResponse ExecuteRequest(string resource, Method method)
         {
             var request = new RestRequest(resource, method);
             var response = _client.Execute(request);
@@ -31,10 +31,5 @@ namespace APITesting.Core.Client
 
             return response;
         }
-
-        //TODO: learn about interfaces
-
-
-        //2 more methods - Get request and Post request, execute request , make it private
     }
 }

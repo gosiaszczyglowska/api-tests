@@ -1,5 +1,4 @@
-﻿
-namespace APITesting.Business.User.UserBuilder
+﻿namespace APITesting.Business.User.UserBuilder
 {
     public class Geo
     {

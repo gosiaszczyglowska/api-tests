@@ -4,6 +4,7 @@ using NUnit.Framework;
 using APITesting.Business.User;
 using Microsoft.Extensions.Configuration;
 
+
 namespace APITesting.Test.Tests
 {
     internal class TestBase
@@ -13,27 +14,30 @@ namespace APITesting.Test.Tests
         private IConfigurationRoot configuration;
 
 
-        [OneTimeSetUp]
-        public void OneTimeSetUp()
+        [SetUp]
+        public void Setup()
         {
-            LogConfig();
+            ConfigureLogging();
+            LoadConfiguration();
+            InitializeServices();
         }
 
-        private void LogConfig()
+        private void ConfigureLogging()
         {
             XmlConfigurator.Configure(new FileInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Core", "Log.config")));
             Console.WriteLine($"Logs will be stored in: {Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs")}");
         }
 
-        [SetUp]
-        public void Setup()
+        private void LoadConfiguration() 
         {
-
-            configuration = ConfigurationHelper.GetConfiguration();
-            var baseUrl = configuration["ApiSettings:BaseUrl"];
-
-            baseClient = new BaseClient(baseUrl);
-            userService = new UserService(baseClient); 
+            configuration = ConfigurationHelper.GetConfiguration();           
         }
+
+        private void InitializeServices() 
+        {
+            var baseUrl = configuration["ApiSettings:BaseUrl"];
+            baseClient = new BaseClient(baseUrl);
+            userService = new UserService(baseClient);
+        }     
     }
 }
