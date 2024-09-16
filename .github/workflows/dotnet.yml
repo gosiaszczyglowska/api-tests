@@ -39,5 +39,4 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: api-test-results
-        path: ./api-test-results
-
+        path: ./TestResults/
