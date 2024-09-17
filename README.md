@@ -1,4 +1,4 @@
-# API-Homework
+# Mentoring1
 
 
 
@@ -15,14 +15,14 @@ Already a pro? Just edit this README.md and make it your own. Want to make it ea
 
 ```
 cd existing_repo
-git remote add origin https://git.epam.com/malgorzata_szczyglowska/api-homework.git
+git remote add origin https://git.epam.com/malgorzata_szczyglowska/mentoring1.git
 git branch -M main
 git push -uf origin main
 ```
 
 ## Integrate with your tools
 
-- [ ] [Set up project integrations](https://git.epam.com/malgorzata_szczyglowska/api-homework/-/settings/integrations)
+- [ ] [Set up project integrations](https://git.epam.com/malgorzata_szczyglowska/mentoring1/-/settings/integrations)
 
 ## Collaborate with your team
 
