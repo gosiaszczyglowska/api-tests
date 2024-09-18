@@ -31,6 +31,9 @@ jobs:
     - name: Run API tests
       run: dotnet test APITesting.sln --no-build --verbosity normal
 
+    - name: List files in bin directory
+      run: ls -R /home/runner/work/api-tests/api-tests/APITesting/bin/
+
     - name: Upload API test results
       uses: actions/upload-artifact@v3
       with:
