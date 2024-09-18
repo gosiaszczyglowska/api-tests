@@ -65,3 +65,9 @@ jobs:
       with:
         name: ui-test-results
         path: ./TestResults/
+
+    - name: Upload API test logs
+      uses: actions/upload-artifact@v3
+      with:
+        name: api-test-logs
+        path: /home/runner/work/api-tests/api-tests/APITesting/bin/Debug/net6.0/Logs
