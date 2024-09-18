@@ -22,14 +22,14 @@ jobs:
       with:
         dotnet-version: 8.0.x
         
-    - name: Restore dependencies
-      run: dotnet restore
+    - name: Restore API project dependencies
+      run: dotnet restore APITesting/APITesting.sln
         
     - name: Build API project
-      run: dotnet build APITesting/APITesting.csproj --no-restore
+      run: dotnet build APITesting/APITesting.sln --no-restore
     
     - name: Run API tests
-      run: dotnet test APITesting/APITesting.csproj --no-build --verbosity normal
+      run: dotnet test APITesting/APITesting.sln --no-build --verbosity normal
 
     - name: Upload API test results
       uses: actions/upload-artifact@v3
