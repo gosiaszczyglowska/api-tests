@@ -1,7 +1,4 @@
-# This workflow will build a .NET project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
-
-name: API Test Pipeline
+name: CI Pipeline
 
 on:
   pull_request:
@@ -13,8 +10,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
-
+  api-tests:
     runs-on: ubuntu-latest
 
     steps:
@@ -28,15 +24,44 @@ jobs:
         
     - name: Restore dependencies
       run: dotnet restore
-      
-    - name: Build
-      run: dotnet build --no-restore
-      
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
+        
+    - name: Build API project
+      run: dotnet build APITesting/APITesting.csproj --no-restore
+    
+    - name: Run API tests
+      run: dotnet test APITesting/APITesting.csproj --no-build --verbosity normal
 
     - name: Upload API test results
       uses: actions/upload-artifact@v3
       with:
         name: api-test-results
+        path: ./TestResults/
+
+  ui-tests:
+    runs-on: ubuntu-latest
+    needs: api-tests
+    if: always()  # This ensures that UI tests run regardless of the API test results
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+        
+    - name: Restore dependencies
+      run: dotnet restore
+        
+    - name: Build UI project
+      run: dotnet build WebUI/WebUI.csproj --no-restore
+    
+    - name: Run UI tests
+      run: dotnet test WebUI/WebUI.csproj --no-build --verbosity normal
+
+    - name: Upload UI test results
+      uses: actions/upload-artifact@v3
+      with:
+        name: ui-test-results
         path: ./TestResults/
