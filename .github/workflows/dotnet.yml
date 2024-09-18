@@ -23,13 +23,13 @@ jobs:
         dotnet-version: 8.0.x
         
     - name: Restore API project dependencies
-      run: dotnet restore APITesting/APITesting.sln
+      run: dotnet restore APITesting.sln
         
     - name: Build API project
-      run: dotnet build APITesting/APITesting.sln --no-restore
+      run: dotnet build APITesting.sln --no-restore
     
     - name: Run API tests
-      run: dotnet test APITesting/APITesting.sln --no-build --verbosity normal
+      run: dotnet test APITesting.sln --no-build --verbosity normal
 
     - name: Upload API test results
       uses: actions/upload-artifact@v3
@@ -51,14 +51,14 @@ jobs:
       with:
         dotnet-version: 8.0.x
         
-    - name: Restore dependencies
-      run: dotnet restore
+    - name: Restore UI project dependencies
+      run: dotnet restore WebUI.sln
         
     - name: Build UI project
-      run: dotnet build WebUI/WebUI.csproj --no-restore
+      run: dotnet build WebUI.sln --no-restore
     
     - name: Run UI tests
-      run: dotnet test WebUI/WebUI.csproj --no-build --verbosity normal
+      run: dotnet test WebUI.sln --no-build --verbosity normal
 
     - name: Upload UI test results
       uses: actions/upload-artifact@v3
