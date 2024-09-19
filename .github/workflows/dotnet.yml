@@ -38,7 +38,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: api-test-results
-        path: ./TestResults/
+        path: ./TestResults/api-test-results.xml
 
   ui-tests:
     runs-on: ubuntu-latest
