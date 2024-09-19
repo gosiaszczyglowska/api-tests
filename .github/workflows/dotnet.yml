@@ -59,9 +59,21 @@ jobs:
         
     - name: Build UI project
       run: dotnet build WebUI.sln --no-restore
+
+    - name: Choose browser (for manual runs)
+      if: github.event_name == 'workflow_dispatch'  # Only for manual runs
+      run: |
+        if [ -z "${{ github.event.inputs.browser }}" ]; then
+          echo "BROWSER_TYPE=chrome" >> $GITHUB_ENV  # Default to Chrome
+        else
+          echo "BROWSER_TYPE=${{ github.event.inputs.browser }}" >> $GITHUB_ENV
+        fi
     
     - name: Run UI tests
       run: dotnet test WebUI.sln --no-build --verbosity normal
+      env:
+        BROWSER_TYPE: ${{ env.BROWSER_TYPE }}
+
 
     - name: Upload UI test results
       uses: actions/upload-artifact@v3
@@ -74,3 +86,9 @@ jobs:
       with:
         name: api-test-logs
         path: /home/runner/work/api-tests/api-tests/APITesting/bin/Debug/net6.0/Logs
+
+    - name: Upload UI test screenshots
+      uses: actions/upload-artifact@v3
+      with:
+        name: ui-test-screenshots
+        path: ./Screenshots/
