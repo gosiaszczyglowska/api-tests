@@ -8,6 +8,17 @@ on:
     - cron: '15 12 * * *'
 
   workflow_dispatch:
+   inputs:
+    browser:
+     description: 'Chose the browser to run UI tests'
+     required: true
+     default: 'chrome'
+     type: choice
+     options:
+      - chrome
+      - firefox
+      - edge
+
 
 jobs:
   api-tests:
@@ -59,15 +70,33 @@ jobs:
         
     - name: Build UI project
       run: dotnet build WebUI.sln --no-restore
-
-    - name: Choose browser (for manual runs)
-      if: github.event_name == 'workflow_dispatch'  # Only for manual runs
+    
+    - name: Install Browser
+      if: ${{ github.event.inputs.browser == 'chrome' }}
       run: |
-        if [ -z "${{ github.event.inputs.browser }}" ]; then
-          echo "BROWSER_TYPE=chrome" >> $GITHUB_ENV  # Default to Chrome
-        else
-          echo "BROWSER_TYPE=${{ github.event.inputs.browser }}" >> $GITHUB_ENV
-        fi
+        sudo apt-get update
+        sudo apt-get install -y google-chrome-stable
+
+    - name: Install Browser
+      if: ${{ github.event.inputs.browser == 'firefox' }}
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y firefox
+
+    - name: Install Browser
+      if: ${{ github.event.inputs.browser == 'edge' }}
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y wget
+        wget https://packages.microsoft.com/keys/microsoft.asc -O- | sudo apt-key add -
+        sudo wget https://packages.microsoft.com/config/ubuntu/$(lsb_release -cs)/prod.list -O /etc/apt/sources.list.d/microsoft-prod.list
+        sudo apt-get update
+        sudo apt-get install -y microsoft-edge-stable
+
+    - name: Set Browser Environment Variable
+      run: |
+        echo "BROWSER_TYPE=${{ github.event.inputs.browser }}" >> $GITHUB_ENV
+
     
     - name: Run UI tests
       run: dotnet test WebUI.sln --no-build --verbosity normal
