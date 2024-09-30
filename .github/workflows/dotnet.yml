@@ -111,7 +111,7 @@ jobs:
           -Path ./Epam/bin/Debug/net8.0/Core/appsettings.json `
           -BrowserType ${{ github.event.inputs.browser }} `
           -Headless $true `
-          -DownloadDirectory "C:\\TestDownload"
+          -DownloadDirectory "/home/runner/work/api-tests/api-tests/TestDownload"
 
       - name: Run UI tests
         run: dotnet test WebUI.sln --no-build --verbosity normal
