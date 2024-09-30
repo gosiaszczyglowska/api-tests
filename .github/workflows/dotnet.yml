@@ -99,7 +99,7 @@ jobs:
           fi
 
       - name: Update appsettings.json
-        shell: powershell
+        shell: pwsh
         run: |
           .\.github\scripts\replace-appsettings.ps1 `
           -Path .\YourProject\bin\Release\net6.0\appsettings.json `
