@@ -21,8 +21,8 @@ namespace PageObject.Core
 
         public IWebDriver InitializeWebDriver(string downloadDirectory)
         {
-            string browserType = Environment.GetEnvironmentVariable("BROWSER_TYPE") ?? "chrome";
-            bool headless = Environment.GetEnvironmentVariable("HEADLESS_MODE") == "true";
+            string browserType = Configuration.Instance.GetAppSettings().BrowserType ?? "chrome";
+            bool headless = Configuration.Instance.GetAppSettings().Headless;
 
             var driver = GetDriver(browserType, downloadDirectory, headless);
             driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
