@@ -1,42 +1,129 @@
-# This workflow will build a .NET project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
-
-name: API Test Pipeline
+name: CI Pipeline
 
 on:
   pull_request:
     branches: [ "main" ]
-
   schedule:
     - cron: '15 12 * * *'
-
   workflow_dispatch:
+    inputs:
+      browser:
+        description: 'Chose the browser to run UI tests'
+        required: true
+        default: 'chrome'
+        type: choice
+        options:
+          - chrome
+          - firefox
+          - edge
 
 jobs:
-  build:
-
+  api-tests:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 8.0.x
-        
-    - name: Restore dependencies
-      run: dotnet restore
-      
-    - name: Build
-      run: dotnet build --no-restore
-      
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Upload API test results
-      uses: actions/upload-artifact@v3
-      with:
-        name: api-test-results
-        path: ./TestResults/
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore API project dependencies
+        run: dotnet restore APITesting.sln
+
+      - name: Build API project
+        run: dotnet build APITesting.sln --no-restore
+
+      - name: Run API tests
+        run: dotnet test APITesting.sln --no-build --verbosity normal
+
+      - name: List files in bin directory
+        run: ls -R /home/runner/work/api-tests/api-tests/APITesting/bin/
+
+      - name: Upload API test results
+        uses: actions/upload-artifact@v3
+        with:
+          name: api-test-results
+          path: ./
+
+  ui-tests:
+    runs-on: ubuntu-latest
+    needs: api-tests
+    if: always()  # This ensures that UI tests run regardless of the API test results
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore UI project dependencies
+        run: dotnet restore WebUI.sln
+
+      - name: Build UI project
+        run: dotnet build WebUI.sln --no-restore
+
+      - name: Install Chrome
+        if: ${{ github.event.inputs.browser == 'chrome' || github.event_name != 'workflow_dispatch' }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable
+
+      - name: Install Firefox
+        if: ${{ github.event.inputs.browser == 'firefox' || github.event_name != 'workflow_dispatch' }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y firefox
+
+      - name: Install Edge
+        if: ${{ github.event.inputs.browser == 'edge' || github.event_name != 'workflow_dispatch' }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget
+          wget https://packages.microsoft.com/keys/microsoft.asc -O- | sudo apt-key add -
+          sudo wget https://packages.microsoft.com/config/ubuntu/$(lsb_release -cs)/prod.list -O /etc/apt/sources.list.d/microsoft-prod.list
+          sudo apt-get update
+          sudo apt-get install -y microsoft-edge-stable
+
+      - name: Set Browser Environment Variable
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "BROWSER_TYPE=${{ github.event.inputs.browser }}" >> $GITHUB_ENV
+          else
+            echo "BROWSER_TYPE=chrome" >> $GITHUB_ENV
+          fi
+
+      - name: Update appsettings.json
+        shell: powershell
+        run: |
+          .\.github\scripts\replace-appsettings.ps1 `
+          -Path .\YourProject\bin\Release\net6.0\appsettings.json `
+          -BrowserType ${{ github.event.inputs.browser }} `
+          -Headless $true `
+          -DownloadDirectory "C:\\TestDownload"
+
+      - name: Run UI tests
+        run: dotnet test WebUI.sln --no-build --verbosity normal
+
+      - name: Upload UI test results
+        uses: actions/upload-artifact@v3
+        with:
+          name: ui-test-results
+          path: ./TestResults/
+
+      - name: Upload API test logs
+        uses: actions/upload-artifact@v3
+        with:
+          name: api-test-logs
+          path: /home/runner/work/api-tests/api-tests/APITesting/bin/Debug/net6.0/Logs
+
+      - name: Upload UI test screenshots
+        uses: actions/upload-artifact@v3
+        with:
+          name: ui-test-screenshots
+          path: ./Screenshots/
