@@ -68,6 +68,12 @@ jobs:
       - name: Build UI project
         run: dotnet build WebUI.sln --no-restore
 
+
+      - name: List files in bin directory for UI tests
+        run: |
+          echo "Listing files in the bin directory:"
+          ls -R ./WebUI/bin/
+
       - name: Install Chrome
         if: ${{ github.event.inputs.browser == 'chrome' || github.event_name != 'workflow_dispatch' }}
         run: |
