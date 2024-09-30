@@ -116,6 +116,11 @@ jobs:
       - name: Run UI tests
         run: dotnet test WebUI.sln --no-build --verbosity normal
 
+      - name: List files in bin directory for UI tests after run
+        run: |
+          echo "Listing files in the bin directory:"
+          ls -R ./
+
       - name: Upload UI test results
         uses: actions/upload-artifact@v3
         with:
@@ -125,11 +130,11 @@ jobs:
       - name: Upload UI test logs
         uses: actions/upload-artifact@v3
         with:
-          name: api-test-logs
-          path: /home/runner/work/api-tests/api-tests/Epam/bin/Debug/net8.0/Logs
+          name: ui-test-logs
+          path: ./home/runner/work/api-tests/api-tests/Epam/bin/Debug/net8.0/Logs
 
       - name: Upload UI test screenshots
         uses: actions/upload-artifact@v3
         with:
           name: ui-test-screenshots
-          path: /home/runner/work/api-tests/api-tests/Epam/bin/Debug/net8.0/Screenshots/
+          path: ./home/runner/work/api-tests/api-tests/Epam/bin/Debug/net8.0/Screenshots
