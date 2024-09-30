@@ -122,11 +122,11 @@ jobs:
           name: ui-test-results
           path: ./TestResults/
 
-      - name: Upload API test logs
+      - name: Upload UI test logs
         uses: actions/upload-artifact@v3
         with:
           name: api-test-logs
-          path: /home/runner/work/api-tests/api-tests/APITesting/bin/Debug/net6.0/Logs
+          path: /home/runner/work/api-tests/api-tests/Epam/bin/Debug/net8.0/Logs
 
       - name: Upload UI test screenshots
         uses: actions/upload-artifact@v3
