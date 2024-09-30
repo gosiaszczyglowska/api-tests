@@ -108,7 +108,7 @@ jobs:
         shell: pwsh
         run: |
           .\.github\scripts\replace-appsettings.ps1 `
-          -Path .\YourProject\bin\Release\net6.0\appsettings.json `
+          -Path ./Epam/bin/Debug/net8.0/Core/appsettings.json `
           -BrowserType ${{ github.event.inputs.browser }} `
           -Headless $true `
           -DownloadDirectory "C:\\TestDownload"
