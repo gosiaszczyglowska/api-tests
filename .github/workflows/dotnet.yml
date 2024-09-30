@@ -135,7 +135,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: ui-test-logs
-          path: ./Epam/bin/Debug/net8.0/Core/Logs
+          path: ./Epam/bin/Debug/net8.0/*.log
 
       - name: Upload UI test screenshots
         if: always()
