@@ -85,7 +85,6 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y firefox
-          sudo apt-get install -y firefox-geckodriver
 
       - name: Install Edge
         if: ${{ github.event.inputs.browser == 'edge' || github.event_name != 'workflow_dispatch' }}
