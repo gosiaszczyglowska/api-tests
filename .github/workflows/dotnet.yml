@@ -36,6 +36,9 @@ jobs:
       - name: Build API project
         run: dotnet build APITesting.sln --no-restore
 
+      - name: Create logs directory for API tests
+        run: mkdir -p ./APITesting/bin/Debug/net6.0/Logs
+
       - name: Run API tests
         run: dotnet test APITesting.sln --no-build --verbosity normal
 
