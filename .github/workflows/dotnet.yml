@@ -46,7 +46,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: api-test-results
-          path: ./
+          path: ./APITesting/bin/Debug/net6.0/*.log
 
   ui-tests:
     runs-on: ubuntu-latest
