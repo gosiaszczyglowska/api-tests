@@ -24,8 +24,15 @@ namespace APITesting.Test.Tests
 
         private void ConfigureLogging()
         {
-            XmlConfigurator.Configure(new FileInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Core", "Log.config")));
-            Console.WriteLine($"Logs will be stored in: {Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs")}");
+            /*            XmlConfigurator.Configure(new FileInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Core", "Log.config")));
+                        Console.WriteLine($"Logs will be stored in: {Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs")}");*/
+
+            string logConfigPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Core", "Log.config");
+            Console.WriteLine($"Log config path: {logConfigPath}");
+            XmlConfigurator.Configure(new FileInfo(logConfigPath));
+
+            string logDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs");
+            Console.WriteLine($"Logs will be stored in: {logDirectory}");
         }
 
         private void LoadConfiguration() 
