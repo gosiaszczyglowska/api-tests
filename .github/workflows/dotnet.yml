@@ -39,8 +39,8 @@ jobs:
       - name: Create logs directory for API tests
         run: mkdir -p ./APITesting/bin/Debug/net6.0/Logs
 
-      - name: Run API tests
-        run: dotnet test APITesting.sln --no-build --verbosity normal
+      - name: Run API tests and create TRX file
+        run: dotnet test APITesting.sln --no-build --verbosity normal --logger "trx;LogFileName=./APITesting/bin/Debug/net6.0/Logs/TestOutput.xml"
 
       - name: List files in bin directory
         run: ls -R ./
@@ -49,7 +49,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: api-test-results
-          path: ./APITesting/bin/Debug/net6.0/*.log
+          path: ./APITesting/bin/Debug/net6.0/Logs/TestOutput.xml
 
   ui-tests:
     runs-on: ubuntu-latest
