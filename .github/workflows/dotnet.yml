@@ -42,7 +42,6 @@ jobs:
       - name: Run API tests and create TRX file
         run: dotnet test APITesting.sln --no-build --verbosity normal --logger "trx;LogFileName=./APITesting/bin/Debug/net6.0/Logs/TestOutput.xml"
 
-       
       - name: Upload API test results
         uses: actions/upload-artifact@v3
         with:
@@ -52,7 +51,7 @@ jobs:
   ui-tests:
     runs-on: windows-latest
     needs: api-tests
-    if: always()  # This ensures that UI tests run regardless of the API test results
+    if: always()
 
     steps:
       - name: Checkout code
@@ -69,38 +68,40 @@ jobs:
       - name: Build UI project
         run: dotnet build WebUI.sln --no-restore
 
-
-      - name: List files in bin directory for UI tests
-        run: |
-          echo "Listing files in the bin directory:"
-          ls -R ./
-
-
-
       - name: Set Browser Environment Variable
+        id: set_browser
         run: |
           if ($env:GITHUB_EVENT_NAME -eq "workflow_dispatch") {
+            echo "::set-output name=browser::${{ github.event.inputs.browser }}"
             echo "BROWSER_TYPE=${{ github.event.inputs.browser }}" >> $env:GITHUB_ENV
           } else {
+            echo "::set-output name=browser::chrome"
             echo "BROWSER_TYPE=chrome" >> $env:GITHUB_ENV
           }
+
+      - name: Install Chrome
+        if: steps.set_browser.outputs.browser == 'chrome'
+        uses: browser-actions/setup-chrome@v1
+
+      - name: Install Firefox
+        if: steps.set_browser.outputs.browser == 'firefox'
+        uses: browser-actions/setup-firefox@v2
+
+      - name: Install Edge
+        if: steps.set_browser.outputs.browser == 'edge'
+        uses: browser-actions/setup-edge@v1
 
       - name: Update appsettings.json
         shell: pwsh
         run: |
           .\.github\scripts\replace-appsettings.ps1 -Path ./Epam/bin/Debug/net8.0/Core/appsettings.json `
-          -BrowserType "${{ github.event.inputs.browser }}" `
+          -BrowserType "$env:BROWSER_TYPE" `
           -Headless $true `
           -DownloadDirectory "/home/runner/work/api-tests/api-tests"
 
       - name: Run UI tests
         run: dotnet test WebUI.sln --no-build --verbosity normal
         continue-on-error: true
-
-      - name: List files in bin directory for UI tests after run
-        run: |
-          echo "Listing files in the bin directory:"
-          ls -R ./
 
       - name: Upload UI test results
         if: always()
