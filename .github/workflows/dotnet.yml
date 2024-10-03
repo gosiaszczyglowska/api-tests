@@ -46,7 +46,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: api-test-results
-          path: ./APITesting/bin/Debug/net6.0/Logs/TestOutput.xml
+          path: D:/a/api-tests/api-tests/APITesting/TestResults/APITesting/bin/Debug/net6.0/Logs/TestOutput.xml
 
   ui-tests:
     runs-on: windows-latest
