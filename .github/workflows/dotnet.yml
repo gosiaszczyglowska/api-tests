@@ -37,7 +37,7 @@ jobs:
         run: dotnet build APITesting.sln --no-restore
 
       - name: Run API tests
-        run: dotnet test APITesting.sln --no-build --verbosity detailed
+        run: dotnet test APITesting.sln --no-build --verbosity normal
 
       - name: List files in bin directory
         run: ls -R ./
