@@ -79,11 +79,11 @@ jobs:
 
       - name: Set Browser Environment Variable
         run: |
-          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-            echo "BROWSER_TYPE=${{ github.event.inputs.browser }}" >> $GITHUB_ENV
-          else
-            echo "BROWSER_TYPE=chrome" >> $GITHUB_ENV
-          fi
+          if ($env:GITHUB_EVENT_NAME -eq "workflow_dispatch") {
+            echo "BROWSER_TYPE=${{ github.event.inputs.browser }}" >> $env:GITHUB_ENV
+          } else {
+            echo "BROWSER_TYPE=chrome" >> $env:GITHUB_ENV
+          }
 
       - name: Update appsettings.json
         shell: pwsh
