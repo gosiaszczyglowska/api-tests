@@ -37,7 +37,7 @@ namespace PageObject.Tests
         private void PrepareTestEnvironment()
         {
             indexPage.Open();
-            indexPage.AcceptCookies();
+            //indexPage.AcceptCookies();
         }
 
         [TearDown]
