@@ -96,7 +96,7 @@ jobs:
         -Path ./Epam/bin/Debug/net8.0/Core/appsettings.json `
         -BrowserType $env:BROWSER_TYPE `
         -Headless $true `
-        -DownloadDirectory "C:\\TestDownload"
+        -DownloadDirectory "./Epam/bin/Debug/net8.0/"
     - name: Run UI tests
       run: dotnet test WebUI.sln --no-build --verbosity normal
       continue-on-error: true
