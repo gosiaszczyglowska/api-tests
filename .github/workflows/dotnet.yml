@@ -51,7 +51,7 @@ jobs:
   ui-tests:
     runs-on: windows-latest
     needs: api-tests
-    if: always()  # This ensures that UI tests run regardless of the API test results
+    if: always()  # Ensures UI tests run regardless of API test results
 
     steps:
     - name: Checkout code
@@ -68,27 +68,29 @@ jobs:
     - name: Build UI project
       run: dotnet build WebUI.sln --no-restore
 
-
-
     - name: Install Chrome
-      if: ${{ github.event.inputs.browser == 'chrome' || github.event_name != 'workflow_dispatch' }}
-      run: choco install googlechrome --no-progress
+      if: ${{ github.event.inputs.browser == 'chrome' }}
+      run: |
+        if (!(Get-Command "chrome" -ErrorAction SilentlyContinue)) {
+          choco install googlechrome --no-progress
+        }
 
     - name: Install Firefox
-      if: ${{ github.event.inputs.browser == 'firefox' || github.event_name != 'workflow_dispatch' }}
-      run: choco install firefox --no-progress
+      if: ${{ github.event.inputs.browser == 'firefox' }}
+      run: |
+        if (!(Get-Command "firefox" -ErrorAction SilentlyContinue)) {
+          choco install firefox --no-progress
+        }
 
     - name: Install Edge
-      if: ${{ github.event.inputs.browser == 'edge' || github.event_name != 'workflow_dispatch' }}
-      run: choco install microsoft-edge --no-progress
+      if: ${{ github.event.inputs.browser == 'edge' }}
+      run: |
+        if (!(Get-Command "msedge" -ErrorAction SilentlyContinue)) {
+          choco install microsoft-edge --no-progress
+        }
 
     - name: Set Browser Environment Variable
-      run: |
-        if ($env:GITHUB_EVENT_NAME -eq "workflow_dispatch") {
-          echo "BROWSER_TYPE=${{ github.event.inputs.browser }}" >> $env:GITHUB_ENV
-        } else {
-          echo "BROWSER_TYPE=chrome" >> $env:GITHUB_ENV
-        }
+      run: echo "BROWSER_TYPE=${{ github.event.inputs.browser }}" >> $env:GITHUB_ENV
 
     - name: Update appsettings.json
       shell: pwsh
