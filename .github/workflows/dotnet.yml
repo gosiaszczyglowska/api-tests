@@ -105,12 +105,6 @@ jobs:
       run: |
         echo "Listing files in the bin directory:"
         dir .\Epam\bin\Debug\net8.0\
-    - name: Upload UI test results
-      if: always()
-      uses: actions/upload-artifact@v3
-      with:
-        name: ui-test-results
-        path: ./TestResults/
 
     - name: Upload UI test logs
       if: always()
