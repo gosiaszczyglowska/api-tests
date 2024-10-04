@@ -48,12 +48,12 @@ jobs:
           name: api-test-results
           path: D:/a/api-tests/api-tests/APITesting/TestResults/APITesting/bin/Debug/net6.0/Logs/TestOutput.xml
 
- ui-tests:
-  runs-on: windows-latest
-  needs: api-tests
-  if: always()  # This ensures that UI tests run regardless of the API test results
+  ui-tests:
+    runs-on: windows-latest
+    needs: api-tests
+    if: always()  # This ensures that UI tests run regardless of the API test results
 
-  steps:
+    steps:
     - name: Checkout code
       uses: actions/checkout@v4
 
