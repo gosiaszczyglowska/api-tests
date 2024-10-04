@@ -101,11 +101,6 @@ jobs:
         -Headless $true `
         -DownloadDirectory "C:\\TestDownload"
 
-    - name: List files in bin directory for UI tests
-      run: |
-        echo "Listing files in the bin directory:"
-        dir ./TestResults/
-
     - name: Run UI tests
       run: dotnet test WebUI.sln --no-build --verbosity normal
       continue-on-error: true
