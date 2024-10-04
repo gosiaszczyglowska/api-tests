@@ -68,12 +68,8 @@ jobs:
     - name: Build UI project
       run: dotnet build WebUI.sln --no-restore
 
-    - name: List files in bin directory for UI tests
-      run: |
-        echo "Listing files in the bin directory:"
-        dir .\Epam\bin\Debug\net8.0\
 
-    # Browser Installation Steps (Windows)
+
     - name: Install Chrome
       if: ${{ github.event.inputs.browser == 'chrome' || github.event_name != 'workflow_dispatch' }}
       run: choco install googlechrome --no-progress
@@ -102,6 +98,11 @@ jobs:
         -BrowserType $env:BROWSER_TYPE `
         -Headless $true `
         -DownloadDirectory "C:\\TestDownload"
+
+    - name: List files in bin directory for UI tests
+      run: |
+        echo "Listing files in the bin directory:"
+        dir ./TestResults/
 
     - name: Run UI tests
       run: dotnet test WebUI.sln --no-build --verbosity normal
