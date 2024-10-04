@@ -18,10 +18,10 @@ on:
           - edge
 
 jobs:
-  api-tests:
-    runs-on: windows-latest
+   api-tests:
+     runs-on: windows-latest
 
-    steps:
+     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -37,7 +37,7 @@ jobs:
         run: dotnet build APITesting.sln --no-restore
 
       - name: Create logs directory for API tests
-        run: mkdir ./APITesting/bin/Debug/net6.0/Logs
+        run: mkdir -p ./APITesting/bin/Debug/net6.0/Logs
 
       - name: Run API tests and create TRX file
         run: dotnet test APITesting.sln --no-build --verbosity normal --logger "trx;LogFileName=./APITesting/bin/Debug/net6.0/Logs/TestOutput.xml"
@@ -46,9 +46,9 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: api-test-results
-          path: D:/a/api-tests/api-tests/APITesting/bin/Debug/net6.0/Logs/TestOutput.xml
+          path: D:/a/api-tests/api-tests/APITesting/TestResults/APITesting/bin/Debug/net6.0/Logs/TestOutput.xml
 
-  ui-tests:
+   ui-tests:
       runs-on: ubuntu-latest
       needs: api-tests
       if: always()  # This ensures that UI tests run regardless of the API test results
