@@ -37,7 +37,7 @@ jobs:
         run: dotnet build APITesting.sln --no-restore
 
       - name: Create logs directory for API tests
-        run: mkdir -p ./APITesting/bin/Debug/net6.0/Logs
+        run: mkdir ./APITesting/bin/Debug/net6.0/Logs
 
       - name: Run API tests and create TRX file
         run: dotnet test APITesting.sln --no-build --verbosity normal --logger "trx;LogFileName=./APITesting/bin/Debug/net6.0/Logs/TestOutput.xml"
@@ -46,76 +46,77 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: api-test-results
-          path: D:/a/api-tests/api-tests/APITesting/TestResults/APITesting/bin/Debug/net6.0/Logs/TestOutput.xml
+          path: ./APITesting/bin/Debug/net6.0/Logs/TestOutput.xml
 
   ui-tests:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     needs: api-tests
     if: always()  # Ensures UI tests run regardless of API test results
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 8.0.x
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
 
-    - name: Restore UI project dependencies
-      run: dotnet restore WebUI.sln
+      - name: Restore UI project dependencies
+        run: dotnet restore WebUI.sln
 
-    - name: Build UI project
-      run: dotnet build WebUI.sln --no-restore
+      - name: Install browsers
+        shell: pwsh
+        run: |
+          $browser = "${{ github.event.inputs.browser }}"
+          if ($browser -eq "chrome") {
+            if (!(Get-Command "chrome" -ErrorAction SilentlyContinue)) {
+              choco install googlechrome --no-progress
+            }
+          }
+          elseif ($browser -eq "firefox") {
+            if (!(Get-Command "firefox" -ErrorAction SilentlyContinue)) {
+              choco install firefox --no-progress
+            }
+          }
+          elseif ($browser -eq "edge") {
+            if (!(Get-Command "msedge" -ErrorAction SilentlyContinue)) {
+              choco install microsoft-edge --no-progress
+            }
+          }
 
-    - name: Install Chrome
-      if: ${{ github.event.inputs.browser == 'chrome' }}
-      run: |
-        if (!(Get-Command "chrome" -ErrorAction SilentlyContinue)) {
-          choco install googlechrome --no-progress
-        }
-    - name: Install Firefox
-      if: ${{ github.event.inputs.browser == 'firefox' }}
-      run: |
-        if (!(Get-Command "firefox" -ErrorAction SilentlyContinue)) {
-          choco install firefox --no-progress
-        }
-    - name: Install Edge
-      if: ${{ github.event.inputs.browser == 'edge' }}
-      run: |
-        if (!(Get-Command "msedge" -ErrorAction SilentlyContinue)) {
-          choco install microsoft-edge --no-progress
-        }
-    - name: Set Browser Environment Variable
-      run: echo "BROWSER_TYPE=${{ github.event.inputs.browser }}" >> $env:GITHUB_ENV
+      - name: Set Browser Environment Variable
+        shell: pwsh
+        run: echo "BROWSER_TYPE=${{ github.event.inputs.browser }}" >> $env:GITHUB_ENV
 
-    - name: Update appsettings.json
-      shell: pwsh
-      run: |
-        .\.github\scripts\replace-appsettings.ps1 `
-        -Path ./Epam/bin/Debug/net8.0/Core/appsettings.json `
-        -BrowserType $env:BROWSER_TYPE `
-        -Headless $true `
-        -DownloadDirectory "D:\a\api-tests\api-tests\Epam\bin\Debug\net8.0\"
-    - name: Run UI tests
-      run: dotnet test WebUI.sln --no-build --verbosity normal
-      continue-on-error: true
+      - name: Update appsettings.json
+        shell: pwsh
+        run: |
+          .\.github\scripts\replace-appsettings.ps1 `
+          -Path ./WebUI/bin/Debug/net6.0/appsettings.json `
+          -BrowserType $env:BROWSER_TYPE `
+          -Headless $true `
+          -DownloadDirectory "D:\a\api-tests\api-tests\WebUI\bin\Debug\net6.0\"
 
-    - name: List files in bin directory for UI tests after run
-      run: |
-        echo "Listing files in the bin directory:"
-        dir .\Epam\bin\Debug\net8.0\
+      - name: Run UI tests
+        run: dotnet test WebUI.sln --no-build --verbosity normal
+        continue-on-error: true
 
-    - name: Upload UI test logs
-      if: always()
-      uses: actions/upload-artifact@v3
-      with:
-        name: ui-test-logs
-        path: ./Epam/bin/Debug/net8.0/*.log
+      - name: List files in bin directory for UI tests after run
+        run: |
+          echo "Listing files in the bin directory:"
+          dir .\WebUI\bin\Debug\net6.0\
 
-    - name: Upload UI test screenshots
-      if: always()
-      uses: actions/upload-artifact@v3
-      with:
-        name: ui-test-screenshots
-        path: ./Epam/bin/Debug/net8.0/Screenshots
+      - name: Upload UI test logs
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: ui-test-logs
+          path: ./WebUI/bin/Debug/net6.0/*.log
+
+      - name: Upload UI test screenshots
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: ui-test-screenshots
+          path: ./WebUI/bin/Debug/net6.0/Screenshots
