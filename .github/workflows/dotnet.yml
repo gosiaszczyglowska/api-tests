@@ -49,7 +49,7 @@ jobs:
           path: D:/a/api-tests/api-tests/APITesting/TestResults/APITesting/bin/Debug/net6.0/Logs/TestOutput.xml
 
   ui-tests:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     needs: api-tests
     if: always()  # Ensures UI tests run regardless of API test results
 
