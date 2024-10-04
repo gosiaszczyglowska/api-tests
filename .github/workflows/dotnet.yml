@@ -51,7 +51,7 @@ jobs:
   ui-tests:
     runs-on: windows-latest
     needs: api-tests
-    if: always()  # Ensures UI tests run regardless of API test results
+    if: always()  # This ensures that UI tests run regardless of the API test results
 
     steps:
     - name: Checkout code
@@ -69,28 +69,38 @@ jobs:
       run: dotnet build WebUI.sln --no-restore
 
     - name: Install Chrome
-      if: ${{ github.event.inputs.browser == 'chrome' }}
+      run: choco install googlechrome --no-progress
+
+    - name: Get Chrome version
+      shell: pwsh
       run: |
-        if (!(Get-Command "chrome" -ErrorAction SilentlyContinue)) {
-          choco install googlechrome --no-progress
-        }
+        $chromePath = 'C:\Program Files\Google\Chrome\Application\chrome.exe'
+        $chromeVersion = (Get-Item $chromePath).VersionInfo.ProductVersion
+        echo "CHROME_VERSION=$chromeVersion" >> $env:GITHUB_ENV
+
+    - name: Install matching ChromeDriver
+      shell: pwsh
+      run: |
+        $chromeMajorVersion = $env:CHROME_VERSION.Split('.')[0]
+        $chromeDriverUrl = "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$chromeMajorVersion"
+        $chromeDriverVersion = Invoke-RestMethod $chromeDriverUrl
+        choco install chromedriver --version=$chromeDriverVersion --no-progress
 
     - name: Install Firefox
-      if: ${{ github.event.inputs.browser == 'firefox' }}
-      run: |
-        if (!(Get-Command "firefox" -ErrorAction SilentlyContinue)) {
-          choco install firefox --no-progress
-        }
+      if: ${{ github.event.inputs.browser == 'firefox' || github.event_name != 'workflow_dispatch' }}
+      run: choco install firefox --no-progress
 
     - name: Install Edge
-      if: ${{ github.event.inputs.browser == 'edge' }}
-      run: |
-        if (!(Get-Command "msedge" -ErrorAction SilentlyContinue)) {
-          choco install microsoft-edge --no-progress
-        }
+      if: ${{ github.event.inputs.browser == 'edge' || github.event_name != 'workflow_dispatch' }}
+      run: choco install microsoft-edge --no-progress
 
     - name: Set Browser Environment Variable
-      run: echo "BROWSER_TYPE=${{ github.event.inputs.browser }}" >> $env:GITHUB_ENV
+      run: |
+        if ($env:GITHUB_EVENT_NAME -eq "workflow_dispatch") {
+          echo "BROWSER_TYPE=${{ github.event.inputs.browser }}" >> $env:GITHUB_ENV
+        } else {
+          echo "BROWSER_TYPE=chrome" >> $env:GITHUB_ENV
+        }
 
     - name: Update appsettings.json
       shell: pwsh
@@ -101,22 +111,10 @@ jobs:
         -Headless $true `
         -DownloadDirectory "./Epam/bin/Debug/net8.0/Core"
 
-
     - name: Run UI tests
-      run: dotnet test WebUI.sln --no-build --verbosity normal -p:ParallelizeTestCollections=true
+      run: dotnet test WebUI.sln --no-build --verbosity normal
       continue-on-error: true
 
-    - name: List files in bin directory for UI tests after run
-      run: |
-        echo "Listing files in the bin directory:"
-        dir .\Epam\bin\Debug\net8.0\
-
-    - name: Upload UI test results
-      if: always()
-      uses: actions/upload-artifact@v3
-      with:
-        name: ui-test-results
-        path: ./TestResults/
 
     - name: Upload UI test logs
       if: always()
