@@ -103,7 +103,7 @@ jobs:
 
 
     - name: Run UI tests
-      run: dotnet test WebUI.sln --no-build --verbosity normal --parallel
+      run: dotnet test WebUI.sln --no-build --verbosity normal -p:ParallelizeTestCollections=true
       continue-on-error: true
 
     - name: List files in bin directory for UI tests after run
