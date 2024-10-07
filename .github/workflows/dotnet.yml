@@ -95,7 +95,7 @@ jobs:
         shell: pwsh
         run: |
           $browser = if ($env:GITHUB_EVENT_NAME -eq 'workflow_dispatch') { '${{ github.event.inputs.browser }}' } else { 'chrome' }
-          .\.github\scripts\replace-appsettings.ps1 `
+          ./.github/scripts/replace-appsettings.ps1 `
           -Path ./Epam/bin/Debug/net8.0/Core/appsettings.json `
           -BrowserType $browser `
           -Headless $true `
