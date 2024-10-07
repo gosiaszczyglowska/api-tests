@@ -122,7 +122,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: ui-test-results
-          path: D:/a/api-tests/api-tests/APITesting/Epam/bin/Debug/net8.0/Logs/UI_TestOutput.xml
+          path: D:/a/api-tests/api-tests/Epam/bin/Debug/net8.0/Logs/UI_TestOutput.xml
 
       - name: Upload UI test logs
         if: always()
