@@ -49,7 +49,7 @@ jobs:
           path: D:/a/api-tests/api-tests/APITesting/TestResults/APITesting/bin/Debug/net6.0/Logs/TestOutput.xml
 
    ui-tests:
-      runs-on: ubuntu-latest
+      runs-on: windows-latest
       needs: api-tests
       if: always()  # This ensures that UI tests run regardless of the API test results
 
@@ -68,38 +68,29 @@ jobs:
       - name: Build UI project
         run: dotnet build WebUI.sln --no-restore
 
-
-      - name: List files in bin directory for UI tests
-        run: |
-          echo "Listing files in the bin directory:"
-          ls -R ./
       - name: Install Chrome
         if: ${{ github.event.inputs.browser == 'chrome' || github.event_name != 'workflow_dispatch' }}
         run: |
-          sudo apt-get update
-          sudo apt-get install -y google-chrome-stable
+          choco install googlechrome --version=latest --no-progress
+
       - name: Install Firefox
         if: ${{ github.event.inputs.browser == 'firefox' || github.event_name != 'workflow_dispatch' }}
         run: |
-          sudo apt-get update
-          sudo apt-get install -y firefox
+          choco install firefox --version=latest --no-progress
+
       - name: Install Edge
         if: ${{ github.event.inputs.browser == 'edge' || github.event_name != 'workflow_dispatch' }}
         run: |
-          sudo apt-get update
-          sudo apt-get install -y wget
-          wget https://packages.microsoft.com/keys/microsoft.asc -O- | sudo gpg --dearmor -o /usr/share/keyrings/microsoft.gpg
-          echo "deb [signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/edge/ stable main" | sudo tee /etc/apt/sources.list.d/microsoft-edge.list
-          sudo apt-get update
-          sudo apt-get install -y microsoft-edge-stable
+          choco install microsoft-edge --version=latest --no-progress
+
       - name: Set Browser Environment Variable
         run: |
-          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-            echo "BROWSER_TYPE=${{ github.event.inputs.browser }}" >> $GITHUB_ENV
-          else
-            echo "BROWSER_TYPE=chrome" >> $GITHUB_ENV
-          fi
-          
+          if ($env:GITHUB_EVENT_NAME -eq 'workflow_dispatch') {
+            echo "BROWSER_TYPE=${{ github.event.inputs.browser }}" >> $env:GITHUB_ENV
+          } else {
+            echo "BROWSER_TYPE=chrome" >> $env:GITHUB_ENV
+          }
+
       - name: Update appsettings.json
         shell: pwsh
         run: |
@@ -108,18 +99,17 @@ jobs:
          -Path ./Epam/bin/Debug/net8.0/Core/appsettings.json `
          -BrowserType $browser `
          -Headless $true `
-         -DownloadDirectory "/home/runner/work/api-tests/api-tests"
-
+         -DownloadDirectory "D:/a/api-tests/api-tests"
 
       - name: Run UI tests
         run: dotnet test WebUI.sln --no-build --verbosity normal
         continue-on-error: true
 
-
       - name: List files in bin directory for UI tests after run
         run: |
           echo "Listing files in the bin directory:"
-          ls -R ./
+          ls -R ./Epam/bin/Debug/net8.0/
+
       - name: Upload UI test results
         if: always()
         uses: actions/upload-artifact@v3
