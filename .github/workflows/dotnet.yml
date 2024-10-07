@@ -101,9 +101,13 @@ jobs:
           -Headless $true `
           -DownloadDirectory "D:/a/api-tests/api-tests"
 
+
+
       - name: Run UI tests and create TRX file
-        run: dotnet test WebUI.sln --no-build --verbosity normal --logger "trx;LogFileName=./Epam/bin/Debug/net8.0/Logs/UI_TestOutput.xml"
+        run: dotnet test WebUI.sln --no-build --verbosity normal --logger "trx;LogFileName=./Epam/bin/Debug/net8.0/Core/Logs/UI_TestOutput.xml"
         continue-on-error: true
+
+        
 
       - name: List files in bin directory for UI tests after run
         run: |
