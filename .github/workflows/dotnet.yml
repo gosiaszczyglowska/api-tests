@@ -89,6 +89,7 @@ jobs:
             echo "BROWSER_TYPE=${{ github.event.inputs.browser }}" >> $env:GITHUB_ENV
           } else {
             echo "BROWSER_TYPE=chrome" >> $env:GITHUB_ENV
+          }
 
       - name: Update appsettings.json
         shell: pwsh
