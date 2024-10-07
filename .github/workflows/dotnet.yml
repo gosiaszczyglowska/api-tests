@@ -100,7 +100,10 @@ jobs:
           -BrowserType $browser `
           -Headless $true `
           -DownloadDirectory "D:/a/api-tests/api-tests"
-
+      
+      
+      - name: Create logs directory for API tests
+        run: mkdir -p ./Epam/bin/Debug/net8.0/Logs
 
 
       - name: Run UI tests and create TRX file
@@ -119,7 +122,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: ui-test-results
-          path: ./Epam/bin/Debug/net8.0/Core/Logs/UI_TestOutput.xml
+          path: D:/a/api-tests/api-tests/APITesting/TestResults/Epam/bin/Debug/net8.0/Core/Logs/UI_TestOutput.xml
 
       - name: Upload UI test logs
         if: always()
