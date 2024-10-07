@@ -110,12 +110,6 @@ jobs:
         run: dotnet test WebUI.sln --no-build --verbosity normal --logger "trx;LogFileName=D:/a/api-tests/api-tests/Epam/bin/Debug/net8.0/Logs/UI_TestOutput.xml"
         continue-on-error: true
 
-        
-
-      - name: List files in bin directory for UI tests after run
-        run: |
-          echo "Listing files in the bin directory:"
-          ls -R ./Epam/bin/Debug/net8.0/
           
       - name: Upload UI test results (.trx)
         if: always()
