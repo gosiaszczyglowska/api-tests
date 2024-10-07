@@ -71,17 +71,18 @@ jobs:
       - name: Install Chrome
         if: ${{ github.event.inputs.browser == 'chrome' || github.event_name != 'workflow_dispatch' }}
         run: |
-          choco install googlechrome --version=latest --no-progress
+          choco install googlechrome --no-progress
 
       - name: Install Firefox
         if: ${{ github.event.inputs.browser == 'firefox' || github.event_name != 'workflow_dispatch' }}
         run: |
-          choco install firefox --version=latest --no-progress
+          choco install firefox --no-progress
 
       - name: Install Edge
         if: ${{ github.event.inputs.browser == 'edge' || github.event_name != 'workflow_dispatch' }}
         run: |
-          choco install microsoft-edge --version=latest --no-progress
+          choco install microsoft-edge --no-progress
+
 
       - name: Set Browser Environment Variable
         run: |
