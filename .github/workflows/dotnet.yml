@@ -18,10 +18,10 @@ on:
           - edge
 
 jobs:
-   api-tests:
-     runs-on: windows-latest
+  api-tests:
+    runs-on: windows-latest
 
-     steps:
+    steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -47,13 +47,13 @@ jobs:
         with:
           name: api-test-results
           path: D:/a/api-tests/api-tests/APITesting/TestResults/APITesting/bin/Debug/net6.0/Logs/TestOutput.xml
+  
+  ui-tests:
+    runs-on: windows-latest
+    needs: api-tests
+    if: always()
 
-   ui-tests:
-      runs-on: windows-latest
-      needs: api-tests
-      if: always()  # This ensures that UI tests run regardless of the API test results
-
-      steps:
+    steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -83,40 +83,38 @@ jobs:
         run: |
           choco install microsoft-edge --no-progress
 
-
       - name: Set Browser Environment Variable
         run: |
           if ($env:GITHUB_EVENT_NAME -eq 'workflow_dispatch') {
             echo "BROWSER_TYPE=${{ github.event.inputs.browser }}" >> $env:GITHUB_ENV
           } else {
             echo "BROWSER_TYPE=chrome" >> $env:GITHUB_ENV
-          }
 
       - name: Update appsettings.json
         shell: pwsh
         run: |
-         $browser = if ($env:GITHUB_EVENT_NAME -eq 'workflow_dispatch') { '${{ github.event.inputs.browser }}' } else { 'chrome' }
-         .\.github\scripts\replace-appsettings.ps1 `
-         -Path ./Epam/bin/Debug/net8.0/Core/appsettings.json `
-         -BrowserType $browser `
-         -Headless $true `
-         -DownloadDirectory "D:/a/api-tests/api-tests"
+          $browser = if ($env:GITHUB_EVENT_NAME -eq 'workflow_dispatch') { '${{ github.event.inputs.browser }}' } else { 'chrome' }
+          .\.github\scripts\replace-appsettings.ps1 `
+          -Path ./Epam/bin/Debug/net8.0/Core/appsettings.json `
+          -BrowserType $browser `
+          -Headless $true `
+          -DownloadDirectory "D:/a/api-tests/api-tests"
 
-      - name: Run UI tests
-        run: dotnet test WebUI.sln --no-build --verbosity normal
+      - name: Run UI tests and create TRX file
+        run: dotnet test WebUI.sln --no-build --verbosity normal --logger "trx;LogFileName=./Epam/bin/Debug/net8.0/Logs/UI_TestOutput.xml"
         continue-on-error: true
 
       - name: List files in bin directory for UI tests after run
         run: |
           echo "Listing files in the bin directory:"
           ls -R ./Epam/bin/Debug/net8.0/
-
-      - name: Upload UI test results
+          
+      - name: Upload UI test results (.trx)
         if: always()
         uses: actions/upload-artifact@v3
         with:
           name: ui-test-results
-          path: ./TestResults/
+          path: ./Epam/bin/Debug/net8.0/Logs/UI_TestOutput.xml
 
       - name: Upload UI test logs
         if: always()
