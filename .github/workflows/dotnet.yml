@@ -107,7 +107,7 @@ jobs:
 
 
       - name: Run UI tests and create TRX file
-        run: dotnet test WebUI.sln --no-build --verbosity normal --logger "trx;LogFileName=./Epam/bin/Debug/net8.0/Logs/UI_TestOutput.xml"
+        run: dotnet test WebUI.sln --no-build --verbosity normal --logger "trx;LogFileName= ./Epam/bin/Debug/net8.0/Logs/UI_TestOutput.xml"
         continue-on-error: true
 
         
@@ -122,7 +122,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: ui-test-results
-          path: D:/a/api-tests/api-tests/APITesting/TestResults/Epam/bin/Debug/net8.0/Logs/UI_TestOutput.xml
+          path: D:/a/api-tests/api-tests/APITesting/Epam/bin/Debug/net8.0/Logs/UI_TestOutput.xml
 
       - name: Upload UI test logs
         if: always()
